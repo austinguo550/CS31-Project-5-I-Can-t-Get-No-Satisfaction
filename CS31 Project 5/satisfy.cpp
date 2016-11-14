@@ -251,8 +251,115 @@ int normalizeRules(char word1[][MAX_WORD_LENGTH + 1], //max of 20 char + 1 null 
 }
 
 
-
 int calculateSatisfaction(const char word1[][MAX_WORD_LENGTH+1],
+                          const char word2[][MAX_WORD_LENGTH+1],
+                          const int distance[],
+                          int nRules,
+                          const char document[]) {
+    int satisfaction = 0;
+    bool ruleUsed[nRules];  // to keep track of which rules were counted and not count repeats
+    for (int i = 0; i < nRules; i++) {  //initialize all rules used as false, since none were used yet
+        ruleUsed[i] = false;
+    }
+    
+    char newDocument[201];
+    long doclength = strlen(document);
+    int newDocLength = 0;
+    //copy document into a new document cstring without any punctuation or numbers
+    
+    for (int i = 0; i < doclength && i < 200 && document[i] != '\0'; i++) { //  index should be less than doclength, 200, and should not have the end marker there
+        if (isalpha(document[i]) || isspace(document[i])) {
+            newDocument[newDocLength] = document[i];
+            newDocLength++;
+        }
+    }
+    
+    //  ----    TESTING ----
+    for (int i = 0; i < newDocLength; i++) {
+        cerr << newDocument[i];
+    }
+    
+    newDocument[newDocLength] = '\0';   //mark the end of the new document cstring
+    for (int i = 0; i < newDocLength; i++) {
+        newDocument[i] = tolower(newDocument[i]);
+    }
+    
+    
+    
+    //NEW!!!!!!!!
+    int i = 0;
+    while (i < newDocLength) {  //going thru entire doc
+        char tempWord1[201];
+        int tempWord1Length = 0;
+        for (; i < newDocLength && !isspace(newDocument[i]); i++) { //finding one word
+            tempWord1[i] = newDocument[i];
+            tempWord1Length++;
+        }
+        //i is at space after word1
+        tempWord1[i] = '\0';
+        //see if the word is equal to any of the word1s
+        for (int row = 0; row < nRules; row++) {
+            char actualWord1[21];
+            for (int j = 0; j < 21 && word1[row][j] != '\0'; j++) {
+                actualWord1[j] = word1[row][j];
+            }
+            if (strcmp(tempWord1, actualWord1) == 0) {
+                //the word2 of the rule
+                char actualWord2[21];
+                for (int j = 0; j < 21 && word2[row][j] != '\0'; j++) {
+                    actualWord2[j] = word2[row][j];
+                }
+                //checking words on the right of the tempWord1
+                int pos = i + 1;    //pos is the next letter
+                int wordsAway = 0;  //how far tempWord2 is from tempWord1
+                char tempWord2[201];
+                int tempWord2Length = 0;
+                while (pos < newDocLength && wordsAway <= distance[row]) {
+                    for (; pos < newDocLength && !isspace(newDocument[pos]); pos++) {
+                        tempWord2[tempWord2Length] = newDocument[pos];
+                        tempWord2Length++;
+                    }
+                    tempWord2[tempWord2Length] = '\0';
+                    if (strcmp(tempWord2, actualWord2) == 0) {
+                        ruleUsed[row] = true;
+                        satisfaction++;
+                        cerr << satisfaction;
+                        break;
+                    }
+                    wordsAway++;
+                    pos++;  // puts position at the first letter of the next word
+                }
+                if (!ruleUsed[row]) {
+                    wordsAway = 0;
+                    pos = i - tempWord1Length - 1;
+                    for (; pos >= 0 && !isspace(newDocument[pos]); pos--); // decrement variable until reaching space
+                    pos++;  // position at first letter of word before
+                    while (pos >= 0 && wordsAway <= distance[row]) {
+                        for (; pos < newDocLength && !isspace(newDocument[pos]); pos++) {
+                            tempWord2[tempWord2Length] = newDocument[pos];
+                            tempWord2Length++;
+                        }
+                        tempWord2[tempWord2Length] = '\0';
+                        if (strcmp(tempWord2, actualWord2) == 0) {
+                            ruleUsed[row] = true;
+                            satisfaction++;
+                            cerr << satisfaction;
+                            break;
+                        }
+                        wordsAway++;
+                        pos -= tempWord2Length;
+                        pos--;  // puts position at the first letter of the next word
+                    }
+                }
+            }
+        }
+        i++;
+    }
+    return satisfaction;
+}
+
+
+/*int calculateSatisfaction(const char word1[][MAX_WORD_LENGTH+1],
                           const char word2[][MAX_WORD_LENGTH+1],
                           const int distance[],
                           int nRules,
@@ -378,4 +485,4 @@ int calculateSatisfaction(const char word1[][MAX_WORD_LENGTH+1],
         }
     }
     return satisfaction;
-}
+}*/
