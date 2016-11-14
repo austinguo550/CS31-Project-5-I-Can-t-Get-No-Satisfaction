@@ -1,0 +1,13 @@
+Test cases:
+1.
+char smallbergRules1[][21] = {"mad", "deranged", "NEFARIOUS", "half-witted", "robot", "plot", "have"};
+char smallBergRules2[][21] = {"scientist", "robot", "PLOT", "assistant", "deranged", "Nefarious", "mad"};
+int smallBergRulesD[] = {2, 4, 1, 3, 2, 1, 13};
+assert(normalizeRules(smallbergRules1, smallBergRules2, smallBergRulesD, 7) == 4);
+    // to see if the normalizeRules function can remove repetitive rules
+2.
+char smallbergRules1[][21] = {"mad", "deranged", "NEFARIOUS", "half-witted", "robot", "plot", "have"};
+char smallBergRules2[][21] = {"scientist", "robot", "PLOT", "assistant", "deranged", "Nefarious", "mad"};
+int smallBergRulesD[] = {2, 4, 1, 3, 2, 10, 13};
+assert(normalizeRules(smallbergRules1, smallBergRules2, smallBergRulesD, 7) == 4);
+    // to see if normalizeRules function can remove repetitive rules but remove the rule with a smaller distance
