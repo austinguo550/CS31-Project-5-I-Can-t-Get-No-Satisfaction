@@ -101,7 +101,7 @@ int main() {
     };
     
     cerr << calculateSatisfaction(test1w1, test1w2, test1dist, TEST1_NRULES,
-                          "The mad UCLA scient78ist u.,nleashed a de95ranged evil giant robot.") << endl;
+                                  "deranged deranged robot deranged robot robot");
     
     /*assert(calculateSatisfaction(test1w1, test1w2, test1dist, TEST1_NRULES,
                                  "The mad UCLA scientist unleashed a deranged evil giant robot.") == 2);
@@ -111,8 +111,8 @@ int main() {
                                  "**** 2016 ****") == 0);
     assert(calculateSatisfaction(test1w1, test1w2, test1dist, TEST1_NRULES,
                                  "  That plot: NEFARIOUS!") == 1);
-    assert(calculateSatisfaction(test1w1, test1w2, test1dist, TEST1_NRULES,
-                                 "deranged deranged robot deranged robot robot") == 1);
+    //assert(calculateSatisfaction(test1w1, test1w2, test1dist, TEST1_NRULES,
+    //                             "deranged deranged robot deranged robot robot") == 1);
     assert(calculateSatisfaction(test1w1, test1w2, test1dist, TEST1_NRULES,
                                  "That scientist said two mad scientists suffer from deranged-robot fever.") == 0);
     cout << "All tests succeeded" << endl;*/
@@ -294,11 +294,11 @@ int calculateSatisfaction(const char word1[][MAX_WORD_LENGTH+1],
         tempWord1[tempWord1Length] = '\0';
         
         //  ----    TESTING ----
-        cerr << "Temp word 1 is " ;
+        /*cerr << "Temp word 1 is " ;
         for (int s = 0; s < newDocLength; s++) {
             cerr << tempWord1[s];
         }
-        cerr << endl << "Temp word 2s are " << endl;
+        cerr << endl << "Temp word 2s are " << endl;*/
 
         
         //see if the word is equal to any of the word1s
@@ -307,7 +307,7 @@ int calculateSatisfaction(const char word1[][MAX_WORD_LENGTH+1],
             for (int j = 0; j < 21 && word1[row][j] != '\0'; j++) {
                 actualWord1[j] = word1[row][j];
             }
-            if (strcmp(tempWord1, actualWord1) == 0) {
+            if (strcmp(tempWord1, actualWord1) == 0 && !ruleUsed[row]) {
                 //the word2 of the rule
                 char actualWord2[21] = "";
                 for (int j = 0; j < 21 && word2[row][j] != '\0'; j++) {
@@ -328,8 +328,9 @@ int calculateSatisfaction(const char word1[][MAX_WORD_LENGTH+1],
                     
                     if (strcmp(tempWord2, actualWord2) == 0) {
                         ruleUsed[row] = true;
+                        //cerr << "Row " << row << " was used" << endl;
                         satisfaction++;
-                        cerr << satisfaction;
+                        //cerr << satisfaction;
                         break;
                     }
                     //cerr << "got here";
@@ -354,15 +355,16 @@ int calculateSatisfaction(const char word1[][MAX_WORD_LENGTH+1],
                         tempVar[tempVarLength] = '\0';
                         
                         //  ----    TESTING ----
-                        for (int s = 0; s < newDocLength; s++) {
+                        /*for (int s = 0; s < newDocLength; s++) {
                             cerr << tempVar[s];
                         }
-                        cerr << endl;
+                        cerr << endl;*/
                         
                         if (strcmp(tempVar, actualWord2) == 0) {
                             ruleUsed[row] = true;
+                            //cerr << "Row " << row << " was used" << endl;
                             satisfaction++;
-                            cerr << satisfaction;
+                            //cerr << satisfaction;
                             break;
                         }
                         wordsAway++;
@@ -376,132 +378,3 @@ int calculateSatisfaction(const char word1[][MAX_WORD_LENGTH+1],
     }
     return satisfaction;
 }
-
-
-/*int calculateSatisfaction(const char word1[][MAX_WORD_LENGTH+1],
-                          const char word2[][MAX_WORD_LENGTH+1],
-                          const int distance[],
-                          int nRules,
-                          const char document[]) {  //document is cstring
-    int satisfaction = 0;
-    bool ruleUsed[nRules];  // to keep track of which rules were counted and not count repeats
-    for (int i = 0; i < nRules; i++) {  //initialize all rules used as false, since none were used yet
-        ruleUsed[i] = false;
-    }
-    
-    char newDocument[201];
-    long doclength = strlen(document);
-    int newDocLength = 0;
-    //copy document into a new document cstring without any punctuation or numbers
-    
-    for (int i = 0; i < doclength && i < 200 && document[i] != '\0'; i++) { //  index should be less than doclength, 200, and should not have the end marker there
-        if (isalpha(document[i]) || isspace(document[i])) {
-            newDocument[newDocLength] = document[i];
-            newDocLength++;
-        }
-    }
-    
-    //  ----    TESTING ----
-    for (int i = 0; i < newDocLength; i++) {
-        cerr << newDocument[i];
-    }
-    
-    newDocument[newDocLength] = '\0';   //mark the end of the new document cstring
-    for (int i = 0; i < newDocLength; i++) {
-        newDocument[i] = tolower(newDocument[i]);
-    }
-    // Done with conversion of document cstring to lower and only has letters
-    
-    
-    // test satisfaction
-    // identify the word in the document
-    for (int i = 0; i < newDocLength; i++) {    //***i is the position in document***
-        char tempWord1[200];        // Smallberg might test a document without spaces (only one word)
-        int tempWordLength = 0;
-        
-        bool onOneWord = true;
-        while (onOneWord) {
-            if (!(isspace(newDocument[i]))) {
-                tempWord1[tempWordLength] = newDocument[i];
-                cerr << tempWord1[tempWordLength];
-                tempWordLength++;
-                i++;
-            }
-            else {
-                //cerr << "Reached space" << endl;
-                onOneWord = false;
-                tempWord1[tempWordLength] = '\0';
-                for (int j = 0; j < nRules; j++) {  //*** sorting through rows of rules: J is the rules rows index ***
-                    //to see if the word in the doc is the same as any of the word1's in rules
-                    char actualWord1[21];
-                    int h = 0;
-                    for (; h < 21 && word1[j][h] != '\0'; h++) {
-                        actualWord1[h] = word1[j][h];
-                    }
-                    actualWord1[h] = '\0';
-                    
-                    //if the word is one of the word1's and the rule hasn't been used, check to see if any surrounding words are word2 from the same rule
-                    if (strcmp(tempWord1, actualWord1) == 0 && !ruleUsed[j]) {
-                        char tempWord2[200];
-                        char actualWord2[21];
-                        int k = 0;
-                        for (; k < 21 && word1[j][k] != '\0'; k++) {
-                            actualWord2[k] = word2[j][k];       //***row index is j because it has to be the word2 for the same rule as word1*** (J IS ROW INDEX)
-                        }
-                        actualWord2[k] = '\0';
-                        int wordsAway = 1;
-                        int pos = i;    // so can preserve the ending position of the word that matched with word1
-                        
-                        // check to see if there's word2 on the right side of word1 within distance
-                        while (wordsAway <= distance[j]) {
-                            for (; !isspace(document[pos]); pos++) {   //since words in document can be much longer than 21 characters, keep reading until you reach a space
-                                tempWord2[pos] = document[pos];
-                            }
-                            tempWord2[pos] = '\0';
-                            if (strcmp(tempWord2, actualWord2) == 0) {
-                                ruleUsed[j] = true;
-                                satisfaction++;
-                                cerr << satisfaction;   // --- TESTING ---
-                                break;
-                            }
-                            else {
-                                wordsAway++;
-                                pos++;
-                            }
-                        }
-                        //if the right side didn't satisfy the rule, check the left side words
-                        if (!ruleUsed[j]) {
-                            pos = i - tempWordLength - 2;   // pos is now the letter before the space before the first letter of the word1
-                            
-                            while (pos >= 0 && wordsAway <= distance[j]) {
-                                for (int decrementor = pos; decrementor >= 0 && !isspace(document[decrementor]); decrementor--){
-                                    pos = decrementor;
-                                } //go to the first space before the word1
-                                int spaceBeforeTempWord2 = pos;
-                                pos++;  // pos is now the first letter of the word we're looking at before word1
-                                
-                                for (; !isspace(document[pos]); pos++) {   //since words in document can be much longer than 21 characters, keep reading until you reach a space
-                                    tempWord2[pos] = document[pos];
-                                }
-                                tempWord2[pos] = '\0';
-                                if (strcmp(tempWord2, actualWord2) == 0) {
-                                    ruleUsed[j] = true;
-                                    satisfaction++;
-                                    cerr << satisfaction;   // ---- TESTING ----
-                                    break;
-                                }
-                                else {
-                                    wordsAway++;
-                                    pos = spaceBeforeTempWord2;
-                                    pos--;                          // pos is now the letter before the space before tempWord2
-                                }
-                            }
-                        }
-                        onOneWord = true;
-                    }
-                }
-            }   //at the end here, i is the space before the next word in the document
-        }
-    }
-    return satisfaction;
-}*/
