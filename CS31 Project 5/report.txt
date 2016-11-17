@@ -1,13 +1,227 @@
-Test cases:
+a.
+In my normalizeRules function, I had a small logic error that took me about 10 minutes to identify and fix. When I compared C-strings to see if word 1 and word 2 for two rules were permutations of one another, I accidentally left off the crucial “ == 0” condition, so I was getting the opposite effect of what I wanted to get. This is because the strcmp function would return true when the comparison yielded any number other than 0, even when the 0 result is returned when the C-strings being compared are the same. Thus my conditional expression would be true when the two C-strings are not the same rather than when they are.
+I also ran into a logic error when developing the calculateSatisfaction function. When storing each word in the document temporarily and comparing to the word1 variables in the rules list, I forgot to reset each C-string word back to an empty C-string after checking every word. Therefore, whenever I would store one word from the document in the temporary variable that is longer than the next consecutive word, for example “deranged” and then “mad”, I would not reset all the bytes in the C-string to empty and instead of getting the second temporary C-string to be “mad” it would be “madanged”, as the bytes not replaced by “mad” would remain. This bug took me approximately 2 hours to catch, since it was such a small but wide-reaching error.
+
+
+b.
+normalizeRules (input array of word1 C-strings, array of word2 C-strings, array of integer distances, number of rules integer) {
+	Initialize integer number of rules counter to number of rules
+	Repeatedly while there are still rules
+	If the any of the integer distances are negative
+		Return 0
+	If any of the rules have no characters and the rule wasn’t removed yet
+		Remove the rule (removing word1, word2, and the distance at the 
+index)
+Decrement number of rules counter
+		If the rule wasn’t removed yet, repeatedly
+			If a character in the C-string isn’t a letter
+				Remove the rule
+				Decrement number of rules counter
+		If the rule wasn’t removed yet, repeatedly
+			If the word1 and word2 of this rule are permutations of word1 and word2 on a different rule
+				Remove the rule with the smaller distance
+				Decrement number of rules counter
+
+
+Return the number of rules counter	
+}
+
+
+calculateSatisfaction (input array of word1 C-strings, array of word2 C-strings, array of integer distances, number of rules integer, document C-string) {
+	Initialize integer satisfaction to 0
+	Initialize a boolean array of rules used with all elements false
+	Initialize a new document C-string
+	Repeatedly
+		Add only letters and spaces from the old document C-string to the new document C-string and end it with a null byte
+	Repeatedly
+		Read a word from the new document (words are separated by space characters)
+		If it matches with word1 from any of the rules
+			Check to see if the words within distance away of the word are equal to word2 of the same rule
+			If they match
+				Increment satisfaction and set the element of rule used corresponding to rule to true
+	Return satisfaction
+}
+
+
+c. Test cases:
+normalizeRules Tests
 1.
 char smallbergRules1[][21] = {"mad", "deranged", "NEFARIOUS", "half-witted", "robot", "plot", "have"};
 char smallBergRules2[][21] = {"scientist", "robot", "PLOT", "assistant", "deranged", "Nefarious", "mad"};
 int smallBergRulesD[] = {2, 4, 1, 3, 2, 1, 13};
 assert(normalizeRules(smallbergRules1, smallBergRules2, smallBergRulesD, 7) == 4);
-    // to see if the normalizeRules function can remove repetitive rules
+    // to see if the normalizeRules function can remove repetitive rules (either one since distances are the same)
+
 2.
 char smallbergRules1[][21] = {"mad", "deranged", "NEFARIOUS", "half-witted", "robot", "plot", "have"};
 char smallBergRules2[][21] = {"scientist", "robot", "PLOT", "assistant", "deranged", "Nefarious", "mad"};
 int smallBergRulesD[] = {2, 4, 1, 3, 2, 10, 13};
 assert(normalizeRules(smallbergRules1, smallBergRules2, smallBergRulesD, 7) == 4);
     // to see if normalizeRules function can remove repetitive rules but remove the rule with a smaller distance
+
+3.
+char smallbergRules1[][21] = {"mad", "deranged", "NEFARIO108US", "half-witted", "robot", "plot", "have"};
+char smallBergRules2[][21] = {"scientist", "robot", "PLOT", "assistant", "deranged", "Nefarious", "mad"};
+int smallBergRulesD[] = {2, 4, 1, 3, 2, 10, 13};
+assert(normalizeRules(smallbergRules1, smallBergRules2, smallBergRulesD, 7) == 4);
+	// To see if normalizeRules will remove rules with numbers
+
+4.
+char smallbergRules1[][21] = {"mad", "deranged", "NEFARIO108US", "half-witted", "robot", "plot", "have"};
+char smallBergRules2[][21] = {"scientist", "robot", "PLOT", "assistant", "deranged", "Nefarious", "mad"};
+int smallBergRulesD[] = {2, 4, 1, 3, 2, 10, 13};
+assert(normalizeRules(smallbergRules1, smallBergRules2, smallBergRulesD, 7) == 4);
+	// To see if normalizeRules will remove rules with non-alphabetic characters (half-witted)
+
+5.
+char smallbergRules1[][21] = {"mad", "deranged", "NEFARIOUS", "half witted", "robot", "plot", "have"};
+char smallBergRules2[][21] = {"scientist", "robot", "PLOT", "assistant", "deranged", "Nefarious", "mad"};
+int smallBergRulesD[] = {2, 4, 1, 3, 2, 1, 13};
+assert(normalizeRules(smallbergRules1, smallBergRules2, smallBergRulesD, 7) == 4);
+    // to see if the normalizeRules function can remove rules with more than one word in each word of the rule
+
+6.
+void printRules(char word1[][21], char word2[][21], int distance[], int nRules) {
+    for (int i = 0; i < nRules; i++) {
+        for (int j = 0; j < 21 && word1[i][j] != '\0'; j++) {
+            cerr << word1[i][j];
+        }
+        cerr << " ";
+        for (int j = 0; j < 21 && word2[i][j] != '\0'; j++) {
+            cerr << word2[i][j];
+        }
+        cerr << " " << distance[i] << endl;
+    }
+}
+printRules(test1w1, test1w2, test1dist, 7);
+	// To make sure everything has been changed to lowercase
+
+7. 
+char test1w1[][21] = {"", "deranged", "NEFARIOUS", "half witted", "robot", "plot", "have"};
+    char test1w2[][21] = {"scientist", "robot", "PLOT", "assistant", "deranged", "Nefarious", "mad"};
+    int test1dist[] = {2, 4, 1, 3, 2, 1, 13};
+    //printRules(test1w1, test2w2, test1dist, 7); cerr << endl;
+    TEST1_NRULES = normalizeRules(test1w1, test1w2, test1dist, TEST1_NRULES);
+	// To make sure that any rules with words less than one character will be removed
+
+8.
+int TEST1_NRULES = 0;
+assert(normalizeRules(test1w1, test1w2, test1dist, TEST1_NRULES) == 0);
+	//Handling test case with 0 rules
+
+9.
+int TEST1_NRULES = -1;
+assert(normalizeRules(test1w1, test1w2, test1dist, TEST1_NRULES) == 0)
+	//Handling test case with negative rules should return 0
+
+10.
+int TEST1_NRULES = 500;
+assert(normalizeRules(test1w1, test1w2, test1dist, TEST1_NRULES) == 0);
+	//With a lot of rules (doesn’t remove any it shouldn’t)
+
+11.
+int TEST1_NRULES = 4;
+            char test1w1[TEST1_NRULES][MAX_WORD_LENGTH+1] = {
+                "mad",       "deranged", "nefarious", "have"
+            };
+            char test1w2[TEST1_NRULES][MAX_WORD_LENGTH+1] = {
+                "scientist", "robot",    "plot",      "mad"
+            };
+            int test1dist[TEST1_NRULES] = {
+                0,           4,          1,           13
+            };
+assert(normalizeRules(test1w1, test1w2, test1dist, TEST1_NRULES) == 3);
+	//With distance of 0 (should remove the rule)
+
+
+
+calculateSatisfaction Tests
+1. assert(calculateSatisfaction(test1w1, test1w2, test1dist, TEST1_NRULES,
+                         "The mad UCLA scientist unleashed a deranged evil giant robot.") == 2);
+	//To see if the program can correctly identify how many rules are satisfied in a sentence.
+
+2. assert(calculateSatisfaction(test1w1, test1w2, test1dist, TEST1_NRULES,
+                         "The mad UCLA scientist unleashed    a deranged robot.") == 2);
+	// To see if the program can handle a document with multiple spaces
+
+3. assert(calculateSatisfaction(test1w1, test1w2, test1dist, TEST1_NRULES,
+                         "**** 2016 ****") == 0);
+	//To see if the program can correctly handle cases with no rules met
+
+4. assert(calculateSatisfaction(test1w1, test1w2, test1dist, TEST1_NRULES,
+                         "  That plot: NEFARIOUS!") == 1);
+	//To see if the function will identify differences in syntax where rules are met
+
+5. assert(calculateSatisfaction(test1w1, test1w2, test1dist, TEST1_NRULES,
+                         "deranged deranged robot deranged robot robot") == 1);
+	// To see if the program double counts rules incorrectly
+
+6. assert(calculateSatisfaction(test1w1, test1w2, test1dist, TEST1_NRULES,
+                         "That scientist said two mad scientists suffer from deranged-robot fever.") == 0);
+	//To see if the program handles minor differences in words (scientists vs scientist, and deranged-robot vs deranged
+
+7.
+int TEST1_NRULES = 0;
+assert(calculateSatisfaction(test1w1, test1w2, test1dist, TEST1_NRULES,
+                "The mad UCLA scientist unleashed a deranged evil giant robot.") == 0);
+	//Handle test case with 0 rules
+
+9.
+int TEST1_NRULES = 500;
+assert(calculateSatisfaction(test1w1, test1w2, test1dist, TEST1_NRULES,
+                "The mad UCLA scientist unleashed a deranged evil giant robot.") == however_many_satisfied);
+	//With a lot of rules (check satisfaction normally)
+
+10.
+assert(calculateSatisfaction(test1w1, test1w2, test1dist, TEST1_NRULES,
+                "ThemadUCLAscientistunleashedaderangedevilgiantrobot.") == 0);
+	With document is only one word and there are more than 20 characters in the document, there should be no rules satisfied
+
+11.
+assert(calculateSatisfaction(test1w1, test1w2, test1dist, TEST1_NRULES,
+                "madscientist") == 0);
+	//With document is only one word and there are less than 20 characters in the document, there should still be no rules satisfied since there’s only one word and not a second word
+
+12.
+const int TEST1_NRULES = 4;
+            char test1w1[TEST1_NRULES][MAX_WORD_LENGTH+1] = {
+                "mad",       "deranged", "robot", "have"
+            };
+            char test1w2[TEST1_NRULES][MAX_WORD_LENGTH+1] = {
+                "scientist", "deranged",    "robot",      "mad"
+            };
+            int test1dist[TEST1_NRULES] = {
+                2,           4,          1,           13
+            };
+assert(calculateSatisfaction(test1w1, test1w2, test1dist, TEST1_NRULES,
+                "deranged deranged robot deranged robot robot") == 2);
+	With word1 is the same word as word2
+
+13.
+assert(calculateSatisfaction(test1w1, test1w2, test1dist, TEST1_NRULES,  "AsIvesaidfromthebeginningourswasnotacampaignbutratheranincredibleandgreatmovementmadeupofmillionsofhardworkingmenandwomenwholovetheircountryandwantabetterbrighterfutureandthisspeechwasfromtrumpitwaslo.") == 0);
+With document of full 200 characters should return 0 because rules are only 20 characters long
+
+14.
+assert(calculateSatisfaction(test1w1, test1w2, test1dist, TEST1_NRULES,
+                “,.,.]\’,./[]\?,.!.@$,;’;”) == 0);
+	//With document of only punctuation
+
+15.
+assert(calculateSatisfaction(test1w1, test1w2, test1dist, TEST1_NRULES,
+                "deranged deranged deranged deranged deranged deranged") == 0);
+	//With document of only word1 or word 2 of the rule returns 0 because it never gets word 2
+
+16.
+const int TEST1_NRULES = 4;
+            char test1w1[TEST1_NRULES][MAX_WORD_LENGTH+1] = {
+                "he",       "deranged", "robot", "have"
+            };
+            char test1w2[TEST1_NRULES][MAX_WORD_LENGTH+1] = {
+                “me”, "deranged",    "robot",      "mad"
+            };
+            int test1dist[TEST1_NRULES] = {
+                200,           4,          1,           13
+            };
+assert(calculateSatisfaction(test1w1, test1w2, test1dist, TEST1_NRULES,
+                "he seemed to say, ‘just because I’m stronger and more of a man than you are.’ We were in the same Senior Society, and while we were never intimate I always had the impression that he approved of me") == 1);
+	//With a distance of 200, and the words1 and 2 are on opposite ends of the document

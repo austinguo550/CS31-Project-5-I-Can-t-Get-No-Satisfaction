@@ -80,42 +80,146 @@ int shiftLeft(char word1[][21],
 int main() {
     // insert code here...
     
-    /*char smallbergRules1[][21] = {"mad", "deranged", "NEFARIOUS", "half-witted", "robot", "plot", "have"};
-    char smallBergRules2[][21] = {"scientist", "robot", "PLOT", "assistant", "deranged", "Nefarious", "mad"};
-    int smallBergRulesD[] = {2, 4, 1, 3, 2, 1, 13};
-    printRules(smallbergRules1, smallBergRules2, smallBergRulesD, 7); cerr << endl;
-    cerr << normalizeRules(smallbergRules1, smallBergRules2, smallBergRulesD, 7) << endl;
-    printRules(smallbergRules1, smallBergRules2, smallBergRulesD, 7);
+    int TEST1_NRULES = 7;
+    char test1w1[][21] = {"mad", "deranged", "NEFARIOUS", "half8witted", "robot", "plot", "have"};
+    char test1w2[][21] = {"scientist", "robot", "PLOT", "assistant", "deranged", "Nefarious", "mad"};
+    int test1dist[] = {2, 4, 1, 3, 2, 1, 13};
+    //printRules(smallbergRules1, smallBergRules2, smallBergRulesD, 7); cerr << endl;
+    TEST1_NRULES = normalizeRules(test1w1, test1w2, test1dist, TEST1_NRULES);
+    //printRules(test1w1, test1w2, test1dist, 7);
     //assert(normalizeRules(smallbergRules1, smallBergRules2, smallBergRulesD, 7) == 4);&/
-    return 0;*/
     
-    const int TEST1_NRULES = 4;
-    char test1w1[TEST1_NRULES][MAX_WORD_LENGTH+1] = {
-        "mad",       "deranged", "nefarious", "have"
-    };
-    char test1w2[TEST1_NRULES][MAX_WORD_LENGTH+1] = {
-        "scientist", "robot",    "plot",      "mad"
-    };
-    int test1dist[TEST1_NRULES] = {
-        2,           4,          1,           13
-    };
-    
-    cerr << calculateSatisfaction(test1w1, test1w2, test1dist, TEST1_NRULES,
-                                  "deranged deranged robot deranged robot robot");
-    
-    /*assert(calculateSatisfaction(test1w1, test1w2, test1dist, TEST1_NRULES,
+
+    assert(calculateSatisfaction(test1w1, test1w2, test1dist, TEST1_NRULES,
                                  "The mad UCLA scientist unleashed a deranged evil giant robot.") == 2);
     assert(calculateSatisfaction(test1w1, test1w2, test1dist, TEST1_NRULES,
                                  "The mad UCLA scientist unleashed    a deranged robot.") == 2);
     assert(calculateSatisfaction(test1w1, test1w2, test1dist, TEST1_NRULES,
+                                 "The mad UCLA scientist unleashed    a  robot   deranged.") == 2);
+    assert(calculateSatisfaction(test1w1, test1w2, test1dist, TEST1_NRULES,
                                  "**** 2016 ****") == 0);
     assert(calculateSatisfaction(test1w1, test1w2, test1dist, TEST1_NRULES,
                                  "  That plot: NEFARIOUS!") == 1);
-    //assert(calculateSatisfaction(test1w1, test1w2, test1dist, TEST1_NRULES,
-    //                             "deranged deranged robot deranged robot robot") == 1);
+    assert(calculateSatisfaction(test1w1, test1w2, test1dist, TEST1_NRULES,
+                                 "deranged deranged robot deranged robot robot") == 1);
     assert(calculateSatisfaction(test1w1, test1w2, test1dist, TEST1_NRULES,
                                  "That scientist said two mad scientists suffer from deranged-robot fever.") == 0);
-    cout << "All tests succeeded" << endl;*/
+
+    cerr << "All Smallberg's tests succeeded" << endl;
+    
+    //my tests
+    char sb1[][21] = {"mad", "deranged", "NEFARIO108US", "half-witted", "robot", "plot", "have"};
+    char sb2[][21] = {"scientist", "robot", "PLOT", "assistant", "deranged", "Nefarious", "mad"};
+    int sbD[] = {2, 4, 1, 3, 2, 10, 13};
+    assert(normalizeRules(sb1, sb2, sbD, 7) == 4);
+    // To see if normalizeRules will remove rules with numbers
+    
+    
+    char johnOliver1[][21] = {"mad", "deranged", "NEFARIO108US", "half-witted", "robot", "plot", "have"};
+    char johnOliver2[][21] = {"scientist", "robot", "PLOT", "assistant", "deranged", "Nefarious", "mad"};
+    int johnOliverD[] = {2, 4, 1, 3, 2, 10, 13};
+    assert(normalizeRules(johnOliver1, johnOliver2, johnOliverD, 7) == 4);
+    // To see if normalizeRules will remove rules with non-alphabetic characters (half-witted)
+    
+    
+
+    char short1[][21] = {"mad", "deranged", "NEFARIOUS", "half witted", "robot", "plot", "have"};
+    char short2[][21] = {"scientist", "robot", "PLOT", "assistant", "deranged", "Nefarious", "mad"};
+    int shortD[] = {2, 4, 1, 3, 2, 1, 13};
+    assert(normalizeRules(short1, short2, shortD, 7) == 4);
+    // to see if the normalizeRules function can remove rules with more than one word in each word of the rule
+    
+
+    char saxon1[][21] = {"", "deranged", "NEFARIOUS", "half witted", "robot", "plot", "have"};
+    char saxon2[][21] = {"scientist", "robot", "PLOT", "assistant", "deranged", "Nefarious", "mad"};
+    int saxonD[] = {2, 4, 1, 3, 2, 1, 13};
+    //printRules(test1w1, test2w2, test1dist, 7); cerr << endl;
+    TEST1_NRULES = normalizeRules(saxon1, saxon2, saxonD, TEST1_NRULES);
+    // To make sure that any rules with words less than one character will be removed
+    
+
+    TEST1_NRULES = 0;
+    assert(normalizeRules(test1w1, test1w2, test1dist, TEST1_NRULES) == 0);
+    //Handling test case with 0 rules
+    
+
+    TEST1_NRULES = -1;
+    assert(normalizeRules(test1w1, test1w2, test1dist, TEST1_NRULES) == 0);
+    //Handling test case with negative rules should return 0
+    
+
+    TEST1_NRULES = 4;
+    char tread1[][MAX_WORD_LENGTH+1] = {
+        "mad",       "deranged", "nefarious", "have"
+    };
+    char tread2[][MAX_WORD_LENGTH+1] = {
+        "scientist", "robot",    "plot",      "mad"
+    };
+    int treadD[] = {
+        0,           4,          1,           13
+    };
+    assert(normalizeRules(tread1, tread2, treadD, TEST1_NRULES) == 3);
+    //With distance of 0 (should remove the rule)
+    
+    
+    
+    
+    
+    
+    int brorules = 0;
+    assert(calculateSatisfaction(test1w1, test1w2, test1dist, brorules,
+                                 "The mad UCLA scientist unleashed a deranged evil giant robot.") == 0);
+    //Handle test case with 0 rules
+    
+    
+    //cerr << "got here";
+    char weird1[][21] = {"mad", "deranged", "g", "r", "f", "n", "h", "j", "i", "j", "h", "u", "o", "uoi", "ashdjf", "ahsjdfh"};
+    char weird2[][21] = {"scientist", "robot", "e", "s", "r", "w", "u", "boab", "boba", "bobaba", "bio", "dk", "bkjla", "bklkia", "bijjkl", "bobbba"};
+    int weirdDist[] = {2, 4, 1, 3, 2, 1, 13, 3, 5, 6, 3, 2, 5, 1, 16, 17};
+    int weird = 16;
+    assert(calculateSatisfaction(weird1, weird2, weirdDist, weird,
+                                 "The mad UCLA scientist unleashed a deranged evil giant robot.") == 2);
+    //With a lot of rules (check satisfaction normally)
+    //cerr << "got here";
+    assert(calculateSatisfaction(test1w1, test1w2, test1dist, TEST1_NRULES,
+                                 "ThemadUCLAscientistunleashedaderangedevilgiantrobot.") == 0);
+    //With document is only one word and there are more than 20 characters in the document, there should be no rules satisfied
+    //cerr << "got here";
+    assert(calculateSatisfaction(test1w1, test1w2, test1dist, TEST1_NRULES,
+                                 "madscientist") == 0);
+    //With document is only one word and there are less than 20 characters in the document, there should still be no rules satisfied since there’s only one word and not a second word
+    
+    
+    char t1[][21] = {"mad", "deranged", "NEFARIOUS", "robot"};
+    char t2[][21] = {"fat", "deranged", "PLOT", "robot"};
+    int ds[] = {5, 3, 2, 5};
+    TEST1_NRULES = 4;
+    assert(calculateSatisfaction(t1, t2, ds, TEST1_NRULES,
+                                 "deranged deranged robot deranged robot robot") == 2);
+    //With word1 is the same word as word2
+    
+    
+    assert(calculateSatisfaction(test1w1, test1w2, test1dist, TEST1_NRULES,  "AsIvesaidfromthebeginningourswasnotacampaignbutratheranincredibleandgreatmovementmadeupofmillionsofhardworkingmenandwomenwholovetheircountryandwantabetterbrighterfutureandthisspeechwasfromtrumpitwaslo") == 0);
+    //With document of full 200 characters should return 0 because rules are only 20 characters long
+    
+    
+    assert(calculateSatisfaction(test1w1, test1w2, test1dist, TEST1_NRULES,
+                                 ",.,.]\",./][]\?,.!.@$,;’;") == 0);
+    //With document of only punctuation
+    
+    
+    assert(calculateSatisfaction(test1w1, test1w2, test1dist, TEST1_NRULES,
+                                 "deranged deranged deranged deranged deranged deranged") == 0);
+    //With document of only word1 or word 2 of the rule returns 0 because it never gets word 2
+    
+    char teedee[][21] = {"he", "deranged", "NEFARIOUS", "robot"};
+    char teetoo[][21] = {"of", "deranged", "PLOT", "robot"};
+    int deez[] = {50, 3, 2, 5};
+    TEST1_NRULES = 4;
+    assert(calculateSatisfaction(teedee, teetoo, deez, TEST1_NRULES,
+                                 "he seemed to say, ‘just because I’m stronger and more of a man than you are.’ We were in the same Senior Society, and while we were never intimate I always had the impression that he approved of me") == 1);
+    cerr << "All my calculateSatisfaction tests succeeded." << endl;
+    //With a distance of 200, and the words1 and 2 are on opposite ends of the document
 }
 
 
@@ -148,7 +252,7 @@ int normalizeRules(char word1[][MAX_WORD_LENGTH + 1], //max of 20 char + 1 null 
         
         //  ----    See if the rule needs to remove itself  ----
         
-        if (distance[i] < 0) {      // Remove if distance is negative
+        if (distance[i] <= 0) {      // Remove if distance is not positive
             shiftLeft(word1, word2, distance, count, i);
             i--;            // to prevent skipping cstrings
             count--;
@@ -175,6 +279,19 @@ int normalizeRules(char word1[][MAX_WORD_LENGTH + 1], //max of 20 char + 1 null 
                 }
             }
         }
+        
+        if (!removed) {
+            for (int j = 0; j < 21 && word2[i][j] != '\0'; j++) {   // Remove if contains a character that is not a letter
+                if (!isalpha(word2[i][j])) {
+                    shiftLeft(word1, word2, distance, count, i);
+                    i--;                // to prevent skipping cstrings
+                    count--;
+                    removed = true;
+                    break;
+                }
+            }
+        }
+        
         //  ----    Rule didn't remove itself   ----
         
         
@@ -256,6 +373,7 @@ int calculateSatisfaction(const char word1[][MAX_WORD_LENGTH+1],
                           const int distance[],
                           int nRules,
                           const char document[]) {
+    if (nRules <= 0) return 0;
     int satisfaction = 0;
     bool ruleUsed[nRules];  // to keep track of which rules were counted and not count repeats
     for (int i = 0; i < nRules; i++) {  //initialize all rules used as false, since none were used yet
@@ -264,10 +382,11 @@ int calculateSatisfaction(const char word1[][MAX_WORD_LENGTH+1],
     
     char newDocument[201];
     long doclength = strlen(document);
+    //cerr << doclength;
     int newDocLength = 0;
     //copy document into a new document cstring without any punctuation or numbers
     
-    for (int i = 0; i < doclength && i < 200 && document[i] != '\0'; i++) { //  index should be less than doclength, 200, and should not have the end marker there
+    for (int i = 0; i < doclength && document[i] != '\0'; i++) { //  index should be less than doclength, 200, and should not have the end marker there
         if (isalpha(document[i]) || isspace(document[i])) {
             newDocument[newDocLength] = document[i];
             newDocLength++;
